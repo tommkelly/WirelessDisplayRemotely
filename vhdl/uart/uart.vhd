@@ -20,7 +20,7 @@ PORT (
 	data_ready_out     : OUT STD_LOGIC ;
 	data_ready_in      : IN  STD_LOGIC ;
 	clr_data_ready_out : IN  STD_LOGIC);
-END loopback;
+END uart;
 
 ARCHITECTURE structural OF uart IS
     COMPONENT rxModule

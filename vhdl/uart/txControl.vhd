@@ -4,10 +4,11 @@ USE IEEE.STD_LOGIC_ARITH.ALL;
 USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 ENTITY txControl IS
+GENERIC(CLKS_PER_TICK : INTEGER);
 PORT (
     clk : IN STD_LOGIC ;
     dataReadyIn : IN STD_LOGIC ;
-    clk_count : IN STD_LOGIC_VECTOR(2 DOWNTO 0) ;
+    clk_count : IN INTEGER RANGE 0 TO CLKS_PER_TICK-1 ;
     index : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
     
     counter_reset : OUT STD_LOGIC ;
@@ -37,13 +38,13 @@ BEGIN
             WHEN idle => IF (dataReadyIn = '1') THEN
                             nxt_state <= start;
                          END IF;
-            WHEN start => IF (clk_count = "111") THEN
+            WHEN start => IF (clk_count = CLKS_PER_TICK-1) THEN
                             nxt_state <= write;
                           END IF;
-            WHEN write => IF (clk_count = "111" and index = "111") THEN
+            WHEN write => IF (clk_count = CLKS_PER_TICK-1 and index = "111") THEN
                             nxt_state <= stopst;
                           END IF;
-            WHEN stopst => IF (clk_count = "111") THEN
+            WHEN stopst => IF (clk_count = CLKS_PER_TICK-1) THEN
                             nxt_state <= idle;
                           END IF;
          END CASE;
@@ -60,6 +61,6 @@ BEGIN
         (state=start) ELSE '0';
     stopsig <= '1' WHEN (state=stopst) ELSE '0';
     index_enable <= '1' WHEN
-        (state=write and clk_count="111") ELSE '0';
+        (state=write and clk_count=CLKS_PER_TICK-1) ELSE '0';
     --clk_reset <= '1' WHEN (state=idle and dataReadyIn='0') ELSE '0';
 END mine;

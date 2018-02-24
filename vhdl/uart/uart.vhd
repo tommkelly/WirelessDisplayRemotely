@@ -11,6 +11,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 ENTITY uart IS
+GENERIC (CLKS_PER_TICK : INTEGER);
 PORT (
     clk      : IN STD_LOGIC ;
     rx       : IN STD_LOGIC ;
@@ -24,6 +25,7 @@ END uart;
 
 ARCHITECTURE structural OF uart IS
     COMPONENT rxModule
+        GENERIC (CLKS_PER_TICK : INTEGER);
         PORT (
             clk             : IN STD_LOGIC ;
             rx              : IN STD_LOGIC ;
@@ -33,6 +35,7 @@ ARCHITECTURE structural OF uart IS
     END COMPONENT ;
     
     COMPONENT txModule
+        GENERIC (CLKS_PER_TICK : INTEGER);
         PORT (
             clk             : IN STD_LOGIC ;
             tx              : OUT STD_LOGIC ;
@@ -42,6 +45,7 @@ ARCHITECTURE structural OF uart IS
     
 BEGIN
     rxBlock: rxModule
+    GENERIC MAP (CLKS_PER_TICK => CLKS_PER_TICK)
     PORT MAP (
         clk             => clk ,
         rx              => rx ,
@@ -51,6 +55,7 @@ BEGIN
     ) ;
     
     txBlock: txModule
+    GENERIC MAP (CLKS_PER_TICK => CLKS_PER_TICK)
     PORT MAP (
         clk             => clk ,
         tx              => tx ,

@@ -20,6 +20,7 @@ END loopback;
 ARCHITECTURE structural OF loopback IS
 
 	COMPONENT uart
+	    GENERIC(CLKS_PER_TICK : INTEGER) ;
 		PORT (
 			clk      : IN STD_LOGIC ;
 			rx       : IN STD_LOGIC ;
@@ -38,6 +39,7 @@ ARCHITECTURE structural OF loopback IS
 BEGIN
     
 	uartBlock : uart
+	GENERIC MAP (CLKS_PER_TICK => 217)
 	PORT MAP (
 		clk				=> clk ,
 		rx				=> rx_sig ,

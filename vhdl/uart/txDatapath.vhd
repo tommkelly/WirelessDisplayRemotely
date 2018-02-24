@@ -7,7 +7,8 @@ ENTITY txDatapath IS
 PORT (
 	counter_reset : IN STD_LOGIC ;
 	tx_active : IN STD_LOGIC ;
-	start_stop : IN STD_LOGIC ;
+	startsig : IN STD_LOGIC ;
+	stopsig : IN STD_LOGIC ;
 	index_enable : IN STD_LOGIC ;
 	--clk_reset : IN STD_LOGIC ;
 	
@@ -91,7 +92,7 @@ BEGIN
 	                   dataIn_2(7) WHEN "111" ,
 	                   dataIn_2(0) WHEN OTHERS;
 	   IF (clk'EVENT AND clk='1') THEN
-	       tx <= (not start_stop) and ((not tx_active) or data_bit);
+	       tx <= stopsig or ((not startsig) and ((not tx_active) or data_bit));
 	   END IF ;
 	END PROCESS txproc ;
 

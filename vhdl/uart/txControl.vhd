@@ -12,7 +12,8 @@ PORT (
     
     counter_reset : OUT STD_LOGIC ;
     tx_active : OUT STD_LOGIC ;
-    start_stop : OUT STD_LOGIC ;
+    startsig : OUT STD_LOGIC ;
+    stopsig : OUT STD_LOGIC ;
     index_enable : OUT STD_LOGIC );
 END txControl;
 
@@ -54,10 +55,10 @@ BEGIN
         (state=start) or
         (state=write) or
         (state=stopst) ELSE '0';
-    start_stop <= '1' WHEN 
+    startsig <= '1' WHEN 
         (state=idle and dataReadyIn='1') or
-        (state=start) or
-        (state=stopst) ELSE '0';
+        (state=start) ELSE '0';
+    stopsig <= '1' WHEN (state=stopst) ELSE '0';
     index_enable <= '1' WHEN
         (state=write and clk_count="111") ELSE '0';
     --clk_reset <= '1' WHEN (state=idle and dataReadyIn='0') ELSE '0';

@@ -18,45 +18,37 @@ PORT (
 END loopback;
 
 ARCHITECTURE structural OF loopback IS
-    COMPONENT rx
-        PORT (
-            clk             : IN STD_LOGIC ;
-            rx              : IN STD_LOGIC ;
-            data_out        : OUT STD_LOGIC_VECTOR(7 DOWNTO 0) ;
-            data_ready      : OUT STD_LOGIC ;
-            clr_data_ready  : IN STD_LOGIC) ;
-    END COMPONENT ;
-    
-    COMPONENT tx
-        PORT (
-            clk             : IN STD_LOGIC ;
-            tx              : OUT STD_LOGIC ;
-            dataIn          : IN STD_LOGIC_VECTOR(7 DOWNTO 0) ;
-            dataReadyIn     : IN STD_LOGIC) ;
-    END COMPONENT ;
+
+	COMPONENT uart
+		PORT (
+			clk      : IN STD_LOGIC ;
+			rx       : IN STD_LOGIC ;
+			tx       : OUT STD_LOGIC ;
+			data_out : OUT STD_LOGIC_VECTOR(7 DOWNTO 0) ;
+			data_in  : IN STD_LOGIC_VECTOR(7 DOWNTO 0) ;
+			data_ready_out     : OUT STD_LOGIC ;
+			data_ready_in      : IN  STD_LOGIC ;
+			clr_data_ready_out : IN  STD_LOGIC);
+	END COMPONENT;
     
     SIGNAL data             : STD_LOGIC_VECTOR(7 DOWNTO 0) ;
     SIGNAL data_ready       : STD_LOGIC ;
     SIGNAL clr_data_ready   : STD_LOGIC ;
     
 BEGIN
-    rxBlock: rx
-    PORT MAP (
-        clk             => clk ,
-        rx              => rx_sig ,
-        data_out        => data ,
-        data_ready      => data_ready ,
-        clr_data_ready  => clr_data_ready
-    ) ;
     
-    txBlock: tx
-    PORT MAP (
-        clk             => clk ,
-        tx              => tx_sig ,
-        dataIn          => data ,
-        dataReadyIn     => data_ready
-    ) ;
-    
+	uartBlock : uart
+	PORT MAP (
+		clk				=> clk ,
+		rx				=> rx_sig ,
+		tx				=> tx_sig ,
+		data_out		=> data ,
+		data_in			=> data ,
+		data_ready_out	=> data_ready ,
+		data_ready_in	=> data_ready ,
+		clr_data_ready_out	=> clr_data_ready
+	) ;
+	
     clr_data_ready <= data_ready ;
     
 END structural;

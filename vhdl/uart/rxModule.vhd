@@ -31,16 +31,16 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-ENTITY rx IS
+ENTITY rxModule IS
 PORT (
     clk             : IN STD_LOGIC ;
     rx              : IN STD_LOGIC ;
     data_out        : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
     data_ready      : OUT STD_LOGIC ;
     clr_data_ready  : IN STD_LOGIC );
-END rx;
+END rxModule;
 
-ARCHITECTURE structural OF rx IS
+ARCHITECTURE structural OF rxModule IS
     COMPONENT control_uart
         PORT (  
                 clk         : IN STD_LOGIC ;

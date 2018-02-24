@@ -41,7 +41,7 @@ ARCHITECTURE structural OF uart IS
     END COMPONENT ;
     
 BEGIN
-    rxBlock: rx
+    rxBlock: rxModule
     PORT MAP (
         clk             => clk ,
         rx              => rx ,
@@ -50,7 +50,7 @@ BEGIN
         clr_data_ready  => clr_data_ready_out
     ) ;
     
-    txBlock: tx
+    txBlock: txModule
     PORT MAP (
         clk             => clk ,
         tx              => tx ,

@@ -64,7 +64,7 @@ begin
                    next_state <= READ;
                  end if;
                  
-    WHEN STOP => if ( clk_count = CLKS_PER_TICK ) then
+    WHEN STOP => if ( clk_count = CLKS_PER_TICK-1 ) then
                    next_state <= IDLE;
                  else 
                    next_state <= STOP;

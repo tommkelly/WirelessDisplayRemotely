@@ -59,7 +59,7 @@ BEGIN
 	clkcounter: PROCESS(clk)
 	BEGIN
 		IF (clk'EVENT AND clk='1') THEN
-			IF (counter_reset = '1') THEN
+			IF (counter_reset = '1' OR clk_count0 = CLKS_PER_TICK-1) THEN
 				clk_count0 <= 0;
 			ELSE
 				clk_count0 <= clk_count0 + 1;

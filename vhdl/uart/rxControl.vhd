@@ -7,9 +7,10 @@ USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 
 entity control_uart is
+GENERIC (CLKS_PER_TICK : INTEGER);
 PORT (clk : IN STD_LOGIC ;
       Rx : IN STD_LOGIC  ;
-      clk_count : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+      clk_count : IN INTEGER RANGE 0 TO CLKS_PER_TICK-1;
       index : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
       index_reset : OUT STD_LOGIC;
       clk_reset : OUT STD_LOGIC;
@@ -51,19 +52,19 @@ begin
                    
     WHEN START => if ( Rx = '1' ) then
                     next_state <= IDLE;
-                  elsif ( clk_count = 4 ) then
+                  elsif ( clk_count = CLKS_PER_TICK/2 ) then
                     next_state <= READ;
                   else
                     next_state <= START;
                   end if;
                   
-    WHEN READ => if ( (clk_count = 7  and index = 7 ) ) then
+    WHEN READ => if ( (clk_count = CLKS_PER_TICK-1  and index = 7 ) ) then
                    next_state <= STOP;
                  else
                    next_state <= READ;
                  end if;
                  
-    WHEN STOP => if ( clk_count = 7 ) then
+    WHEN STOP => if ( clk_count = CLKS_PER_TICK-1 ) then
                    next_state <= IDLE;
                  else 
                    next_state <= STOP;
@@ -83,7 +84,7 @@ begin
                bit_read_enable <= '0';
                data_ready <= '0';
                
-  WHEN START => if ( clk_count = 4) then
+  WHEN START => if ( clk_count = CLKS_PER_TICK/2) then
                   clk_reset <= '1';
                 else
                   clk_reset <= '0';
@@ -92,7 +93,7 @@ begin
                 bit_read_enable <= '0';
                 data_ready <= '0';
                 
-  WHEN READ => if ( clk_count = 7 ) then
+  WHEN READ => if ( clk_count = CLKS_PER_TICK-1 ) then
                  bit_read_enable <= '1';
                else
                  bit_read_enable <= '0';
@@ -101,7 +102,7 @@ begin
                clk_reset <= '0';
                data_ready <= '0';
                
-  WHEN STOP => if ( clk_count = 7 ) then
+  WHEN STOP => if ( clk_count = CLKS_PER_TICK-1 ) then
                  data_ready <= '1';
                else
                  data_ready <= '0';

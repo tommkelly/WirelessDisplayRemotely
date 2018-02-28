@@ -4,6 +4,7 @@ USE IEEE.STD_LOGIC_ARITH.ALL ;
 USE IEEE.STD_LOGIC_UNSIGNED.ALL ;
 
 ENTITY rx_datapath IS
+    GENERIC (CLKS_PER_TICK : INTEGER);
 	PORT (	-- Thou shalt have no other clk before it.
 			clk				: IN STD_LOGIC ;
 			
@@ -14,7 +15,7 @@ ENTITY rx_datapath IS
 			data_ready		: IN STD_LOGIC ;
 			
 			-- Control Outputs
-			clk_count_outl	: OUT STD_LOGIC_VECTOR(2 DOWNTO 0) ;
+			clk_count_outl	: OUT INTEGER RANGE 0 TO CLKS_PER_TICK-1 ;
 			index_outl		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0) ;
 			
 			-- Datapath Inputs
@@ -37,7 +38,7 @@ ARCHITECTURE structural OF rx_datapath IS
 	-- Enable signals for data register
 	SIGNAL data_en		: STD_LOGIC_VECTOR(7 DOWNTO 0) ;
 	-- Internal copies of outputs
-	SIGNAL clk_count    : STD_LOGIC_VECTOR(2 DOWNTO 0) ;
+	SIGNAL clk_count    : INTEGER RANGE 0 TO CLKS_PER_TICK-1 ;
 	SIGNAL index        : STD_LOGIC_VECTOR(2 DOWNTO 0) ;
 	
 BEGIN
@@ -104,8 +105,8 @@ BEGIN
 	clock_counter: PROCESS(clk)
 	BEGIN
 		IF (clk'EVENT AND clk = '1') THEN
-			IF (clk_reset = '1') THEN
-				clk_count <= "000" ;
+			IF (clk_reset = '1' OR clk_count = CLKS_PER_TICK-1) THEN
+				clk_count <= 0 ;
 			ELSE
 				clk_count <= clk_count + 1 ;
 			END IF ;

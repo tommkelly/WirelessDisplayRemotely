@@ -4,6 +4,7 @@ USE IEEE.STD_LOGIC_ARITH.ALL;
 USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 ENTITY txDatapath IS
+GENERIC (CLKS_PER_TICK : INTEGER);
 PORT (
 	counter_reset : IN STD_LOGIC ;
 	tx_active : IN STD_LOGIC ;
@@ -12,7 +13,7 @@ PORT (
 	index_enable : IN STD_LOGIC ;
 	--clk_reset : IN STD_LOGIC ;
 	
-	clk_count : OUT STD_LOGIC_VECTOR(2 DOWNTO 0) ;
+	clk_count : OUT INTEGER RANGE 0 TO CLKS_PER_TICK-1 ;
 	index : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 	
 	dataReadyIn_2 : OUT STD_LOGIC;
@@ -30,7 +31,7 @@ ARCHITECTURE mine OF txDatapath IS
 	SIGNAL dataReadyIn_1 : STD_LOGIC ;
 	SIGNAL dataReadyIn_2_0 : STD_LOGIC ;
 	
-	SIGNAL clk_count0 : STD_LOGIC_VECTOR(2 DOWNTO 0);
+	SIGNAL clk_count0 : INTEGER RANGE 0 TO CLKS_PER_TICK-1;
 	SIGNAL index0 : STD_LOGIC_VECTOR(2 DOWNTO 0);
 		
 BEGIN
@@ -58,8 +59,8 @@ BEGIN
 	clkcounter: PROCESS(clk)
 	BEGIN
 		IF (clk'EVENT AND clk='1') THEN
-			IF (counter_reset = '1') THEN
-				clk_count0 <= "000";
+			IF (counter_reset = '1' OR clk_count0 = CLKS_PER_TICK-1) THEN
+				clk_count0 <= 0;
 			ELSE
 				clk_count0 <= clk_count0 + 1;
 			END IF;

@@ -32,6 +32,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 ENTITY rxModule IS
+GENERIC (CLKS_PER_TICK : INTEGER);
 PORT (
     clk             : IN STD_LOGIC ;
     rx              : IN STD_LOGIC ;
@@ -42,10 +43,11 @@ END rxModule;
 
 ARCHITECTURE structural OF rxModule IS
     COMPONENT control_uart
+        GENERIC (CLKS_PER_TICK : INTEGER);
         PORT (  
                 clk         : IN STD_LOGIC ;
                 Rx          : IN STD_LOGIC  ;
-                clk_count   : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+                clk_count   : IN INTEGER RANGE 0 TO CLKS_PER_TICK-1;
                 index       : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
                 index_reset : OUT STD_LOGIC;
                 clk_reset   : OUT STD_LOGIC;
@@ -53,14 +55,15 @@ ARCHITECTURE structural OF rxModule IS
                 data_ready  : OUT STD_LOGIC);
     END COMPONENT ;
     COMPONENT rx_datapath
-            PORT (
+        GENERIC (CLKS_PER_TICK : INTEGER);
+        PORT (
                 clk          : IN STD_LOGIC ;
                 clk_reset        : IN STD_LOGIC ;
                 index_reset        : IN STD_LOGIC ;
                 bit_read_en        : IN STD_LOGIC ;
                 data_ready        : IN STD_LOGIC ;
-                clk_count_outl        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0) ;
-                index_outl            : OUT STD_LOGIC_VECTOR(2 DOWNTO 0) ;
+                clk_count_outl    : OUT INTEGER RANGE 0 TO CLKS_PER_TICK-1 ;
+                index_outl        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0) ;
                 rx                : IN STD_LOGIC ;
                 data_ready_outl    : OUT STD_LOGIC ;
                 data_out        : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -68,7 +71,7 @@ ARCHITECTURE structural OF rxModule IS
          );
     END COMPONENT ;
     
-    SIGNAL clk_count    : STD_LOGIC_VECTOR(2 DOWNTO 0);
+    SIGNAL clk_count    : INTEGER RANGE 0 TO CLKS_PER_TICK-1;
     SIGNAL index        : STD_LOGIC_VECTOR(2 DOWNTO 0);
     SIGNAL index_reset  : STD_LOGIC;
     SIGNAL clk_reset    : STD_LOGIC;
@@ -77,6 +80,7 @@ ARCHITECTURE structural OF rxModule IS
     
 BEGIN
     rxControlBlock: control_uart
+        GENERIC MAP (CLKS_PER_TICK => CLKS_PER_TICK)
         PORT MAP (  
             clk         => clk,
             Rx          => rx,
@@ -88,6 +92,7 @@ BEGIN
             data_ready  => data_ready_inl);
                     
     rxDatapathBlock: rx_datapath
+        GENERIC MAP (CLKS_PER_TICK => CLKS_PER_TICK)
         PORT MAP (
             clk         => clk,
             clk_reset   => clk_reset,

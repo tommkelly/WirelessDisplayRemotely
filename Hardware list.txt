@@ -1,0 +1,17 @@
+FPGA: XC6SLX9
+https://classes.engineering.wustl.edu/cse462/images/9/99/Ug380.pdf (master serial)
+
+PROM: xcf04s
+https://www.xilinx.com/support/documentation/user_guides/ug161.pdf (master serial)
+
+Oscillator: LTC6905-100 (?)
+https://classes.engineering.wustl.edu/cse462/images/2/2d/6905xfa.pdf (Pin 4 -> GND)
+
+Reset Chip: TPS3820?
+https://classes.engineering.wustl.edu/cse462/images/d/dd/Tps3820-50.pdf
+
+Barrel Jack: PJ-202A (60 cents)
+http://www.cui.com/product/resource/pj-202a.pdf
+
+1V2 Regulator
+https://classes.engineering.wustl.edu/cse462/images/d/dd/Tps3820-50.pdf

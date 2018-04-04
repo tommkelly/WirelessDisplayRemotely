@@ -46,7 +46,7 @@ ARCHITECTURE mine OF vga IS
 BEGIN
 			 
 	vc <= v - 35 ;
-	hc <= h - 142 ;
+	hc <= h - 140 ;
 	
 	addrb12 <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) ;
 	

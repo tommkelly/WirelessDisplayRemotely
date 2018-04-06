@@ -78,12 +78,16 @@ ARCHITECTURE structural OF rxModule IS
     SIGNAL bit_read_en  : STD_LOGIC;
     SIGNAL data_ready_inl: STD_LOGIC;
     
+    -- Back-to-back flip-flops on the asynchronous input
+    SIGNAL rx_a            : STD_LOGIC ;
+    SIGNAL rx_b            : STD_LOGIC ;
+    
 BEGIN
     rxControlBlock: control_uart
         GENERIC MAP (CLKS_PER_TICK => CLKS_PER_TICK)
         PORT MAP (  
             clk         => clk,
-            Rx          => rx,
+            Rx          => rx_b,
             clk_count   => clk_count,
             index       => index,
             index_reset => index_reset,
@@ -101,9 +105,18 @@ BEGIN
             data_ready  => data_ready_inl,
             clk_count_outl   => clk_count,
             index_outl       => index,
-            rx          => rx,
+            rx          => rx_b,
             data_ready_outl => data_ready,
             data_out    => data_out,
             clr_data_ready => clr_data_ready
         );
+        
+    -- Back-to-back flip-flops for asynchronous rx input
+    rx_flops: PROCESS(clk)
+    BEGIN
+        IF (clk'EVENT AND clk = '1') THEN
+            rx_a <= rx;
+            rx_b <= rx_a;
+        END IF ;
+    END PROCESS rx_flops ;
 END structural ;

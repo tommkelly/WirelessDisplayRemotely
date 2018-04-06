@@ -30,9 +30,6 @@ END rx_datapath;
 
 ARCHITECTURE structural OF rx_datapath IS
 
-	-- Back-to-back flip-flops on the asynchronous input
-	SIGNAL rx_a			: STD_LOGIC ;
-	SIGNAL rx_b			: STD_LOGIC ;
 	-- One-hot index for data register
 	SIGNAL index_1h		: STD_LOGIC_VECTOR(7 DOWNTO 0) ;
 	-- Enable signals for data register
@@ -80,15 +77,6 @@ BEGIN
 	   END IF ;
     END PROCESS data_ready_flop ;
 	
-	-- Back-to-back flip-flops for asynchronous rx input
-	rx_flops: PROCESS(clk)
-	BEGIN
-		IF (clk'EVENT AND clk = '1') THEN
-			rx_a <= rx;
-			rx_b <= rx_a;
-		END IF ;
-	END PROCESS rx_flops ;
-	
 	-- Index counter (counts 8 bits per word)
 	index_counter: PROCESS(clk)
 	BEGIN
@@ -118,21 +106,21 @@ BEGIN
 	BEGIN
 		IF (clk'EVENT AND clk = '1') THEN
 			IF (data_en(0) = '1') THEN
-				data_out(0) <= rx_b ;
+				data_out(0) <= rx ;
 			ELSIF (data_en(1) = '1') THEN
-				data_out(1) <= rx_b ;
+				data_out(1) <= rx ;
 			ELSIF (data_en(2) = '1') THEN
-				data_out(2) <= rx_b ;
+				data_out(2) <= rx ;
 			ELSIF (data_en(3) = '1') THEN
-				data_out(3) <= rx_b ;
+				data_out(3) <= rx ;
 			ELSIF (data_en(4) = '1') THEN
-				data_out(4) <= rx_b ;
+				data_out(4) <= rx ;
 			ELSIF (data_en(5) = '1') THEN
-				data_out(5) <= rx_b ;
+				data_out(5) <= rx ;
 			ELSIF (data_en(6) = '1') THEN
-				data_out(6) <= rx_b ;
+				data_out(6) <= rx ;
 			ELSIF (data_en(7) = '1') THEN
-				data_out(7) <= rx_b ;
+				data_out(7) <= rx ;
 			END IF ;
 		END IF ;
 	END PROCESS data_register ;

@@ -49,7 +49,13 @@ BEGIN
 	vc <= v - 35 ;
 	hc <= h - 140 ;
 	
-	addrb12 <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
+	-- addrb12 <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
+	textaddr:PROCESS(vc, hc, offset)
+	BEGIN
+	   addrb12 <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
+	   IF (addrb12 >= 3840) THEN
+	       addrb12 <= addrb12 - 3840;
+	END PROCESS ;
 	
 	myrom1:my_text_rom
 		PORT MAP(CLKA => clk ,

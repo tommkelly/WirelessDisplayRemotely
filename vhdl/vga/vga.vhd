@@ -6,6 +6,7 @@ USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 ENTITY vga IS
 PORT (clk	: IN STD_LOGIC ;
 	addra	: IN STD_LOGIC_VECTOR(11 DOWNTO 0) ;
+	offset  : IN STD_LOGIC_VECTOR(11 DOWNTO 0) ;
 	dina	: IN STD_LOGIC_VECTOR(7 DOWNTO 0) ;
 	ena		: IN STD_LOGIC ;
 	wea		: IN STD_LOGIC_VECTOR(0 DOWNTO 0) ;
@@ -48,7 +49,7 @@ BEGIN
 	vc <= v - 35 ;
 	hc <= h - 140 ;
 	
-	addrb12 <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) ;
+	addrb12 <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
 	
 	myrom1:my_text_rom
 		PORT MAP(CLKA => clk ,

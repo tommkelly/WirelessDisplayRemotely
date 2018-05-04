@@ -21,6 +21,7 @@ ARCHITECTURE mine OF vga IS
 	SIGNAL h : STD_LOGIC_VECTOR(9 DOWNTO 0) := "0000000000" ;
 	SIGNAL v : STD_LOGIC_VECTOR(9 DOWNTO 0) := "0000000000" ;
 	SIGNAL addrb12 : STD_LOGIC_VECTOR(11 DOWNTO 0) ;
+	SIGNAL addrb12_intl : STD_LOGIC_VECTOR(11 DOWNTO 0) ;
 	SIGNAL addra14 : STD_LOGIC_VECTOR(13 DOWNTO 0) ;
 	SIGNAL douta : STD_LOGIC_VECTOR(0 DOWNTO 0) ;
 	SIGNAL vc : STD_LOGIC_VECTOR(9 DOWNTO 0) ;
@@ -52,9 +53,12 @@ BEGIN
 	-- addrb12 <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
 	textaddr:PROCESS(vc, hc, offset)
 	BEGIN
-	   addrb12 <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
-	   IF (addrb12 >= 3840) THEN
-	       addrb12 <= addrb12 - 3840;
+	   addrb12_intl <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
+	   IF (addrb12_intl >= 3840) THEN
+	       addrb12 <= addrb12_intl - 3840;
+	   ELSE
+	       addrb12 <= addrb12_intl;
+	   END IF;
 	END PROCESS ;
 	
 	myrom1:my_text_rom

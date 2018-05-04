@@ -78,6 +78,7 @@ BEGIN
 		dina => data,
 		ena => '1',
 		wea => wea,
+		invert => invert,
 		r => r,
 		g => g,
 		b => b,
@@ -90,11 +91,11 @@ BEGIN
 		IF (clk = '1' AND clk'EVENT) THEN
 			IF (data_ready = '1') THEN
 				IF (data = "10000000") THEN
-					invert = NOT invert;
-				END ELSE
-					addr_counter = addr_counter_next;
-					scrolling = scrolling_next;
-					offset = offset_next;
+					invert <= NOT invert;
+				ELSE
+					addr_counter <= addr_counter_next;
+					scrolling <= scrolling_next;
+					offset <= offset_next;
 				END IF ;
 			END IF;
 			IF (reset = '1') THEN
@@ -110,26 +111,26 @@ BEGIN
 		
 		IF (data = "00000000") THEN
 			reset <= '1';
-		END ELSE
+		ELSE
 			reset <= '0';
-		END
+		END IF;
 		
 		IF (addr_counter = 3839) THEN
 			addr_counter_next <= "000000000000";
 			scrolling_next <= '1';
-		END ELSE
+		ELSE
 			addr_counter_next <= addr_counter + 1;
 			scrolling_next <= scrolling;
 		END IF;
 		
 		IF (scrolling_next = '1' AND addr_counter_next(6 DOWNTO 0) = "0000000") THEN
 			IF (offset = 3712) THEN
-				offset_next = "000000000000";
-			END ELSE
-				offset_next = offset + 128;
+				offset_next <= "000000000000";
+			ELSE
+				offset_next <= offset + 128;
 			END IF;
-		END ELSE
-			offset_next = offset;
+		ELSE
+			offset_next <= offset;
 		END IF;
 		
 	END PROCESS;

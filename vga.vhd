@@ -19,6 +19,7 @@ PORT (clk	: IN STD_LOGIC ;
 END vga ;
 
 ARCHITECTURE mine OF vga IS
+    SIGNAL r_inl, g_inl, b_inl : STD_LOGIC_VECTOR(3 DOWNTO 0);
 	SIGNAL h : STD_LOGIC_VECTOR(9 DOWNTO 0) := "0000000000" ;
 	SIGNAL v : STD_LOGIC_VECTOR(9 DOWNTO 0) := "0000000000" ;
 	SIGNAL addrb12_inl : STD_LOGIC_VECTOR(11 DOWNTO 0) ;
@@ -127,21 +128,25 @@ BEGIN
 			IF (clk = '1' AND clk'EVENT) THEN
 				IF (h > 143) AND (h < 784) AND (v > 34) AND (v < 515) THEN
 				    IF (color_delay2 = '0') THEN
-                        r <= (douta XOR invert) & (douta XOR invert) & (douta XOR invert) & (douta XOR invert) ;
-                        b <= (douta XOR invert) & (douta XOR invert) & (douta XOR invert) & (douta XOR invert) ;
-                        g <= (douta XOR invert) & (douta XOR invert) & (douta XOR invert) & (douta XOR invert) ;
+                        r_inl <= douta & douta & douta & douta ;
+                        b_inl <= douta & douta & douta & douta ;
+                        g_inl <= douta & douta & douta & douta ;
 					ELSE
-					    r <= ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) ;
-                        b <= (douta XOR invert) & (douta XOR invert) & (douta XOR invert) & (douta XOR invert) ;
-                        g <= (douta XOR invert) & ('0' XOR invert) & (douta XOR invert) & (douta XOR invert) ;
+					    r_inl <= "0000" ;
+                        b_inl <= douta & douta & douta & douta ;
+                        g_inl <= douta & '0' & douta & douta ;
 					END IF ;
 				ELSE
-					r <= ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) ; ;
-					g <= ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) ; ;
-					b <= ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) ; ;
+					r_inl <= "0000" ;
+					g_inl <= "0000" ;
+					b_inl <= "0000" ;
 				END IF ;
 				color_delay1 <= achar(7);
                 color_delay2 <= color_delay1;
 			END IF ;
 	END PROCESS ;
+	
+	r <= (NOT r_inl) WHEN (invert = '1') ELSE r_inl;
+	g <= (NOT g_inl) WHEN (invert = '1') ELSE g_inl;
+	b <= (NOT b_inl) WHEN (invert = '1') ELSE b_inl;
 END mine ;

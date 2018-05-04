@@ -20,10 +20,12 @@ END vga ;
 ARCHITECTURE mine OF vga IS
 	SIGNAL h : STD_LOGIC_VECTOR(9 DOWNTO 0) := "0000000000" ;
 	SIGNAL v : STD_LOGIC_VECTOR(9 DOWNTO 0) := "0000000000" ;
+	SIGNAL addrb12_inl : STD_LOGIC_VECTOR(11 DOWNTO 0) ;
 	SIGNAL addrb12 : STD_LOGIC_VECTOR(11 DOWNTO 0) ;
-	SIGNAL addrb12_intl : STD_LOGIC_VECTOR(11 DOWNTO 0) ;
 	SIGNAL addra14 : STD_LOGIC_VECTOR(13 DOWNTO 0) ;
 	SIGNAL douta : STD_LOGIC_VECTOR(0 DOWNTO 0) ;
+	SIGNAL color_delay1 : STD_LOGIC ;
+	SIGNAL color_delay2 : STD_LOGIC ;
 	SIGNAL vc : STD_LOGIC_VECTOR(9 DOWNTO 0) ;
 	SIGNAL hc : STD_LOGIC_VECTOR(9 DOWNTO 0) ;
 	SIGNAL hcc : STD_LOGIC_VECTOR(2 DOWNTO 0) ;
@@ -53,12 +55,12 @@ BEGIN
 	-- addrb12 <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
 	textaddr:PROCESS(vc, hc, offset)
 	BEGIN
-	   addrb12_intl <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
-	   IF (addrb12_intl >= 3840) THEN
-	       addrb12 <= addrb12_intl - 3840;
-	   ELSE
-	       addrb12 <= addrb12_intl;
-	   END IF;
+	   addrb12_inl <= (vc(8 DOWNTO 4) & hc(9 DOWNTO 3)) + offset;
+	   IF (addrb12_inl >= 3840) THEN
+	       addrb12 <= addrb12_inl - 3840;
+       ELSE
+           addrb12 <= addrb12_inl ;
+       END IF ;
 	END PROCESS ;
 	
 	myrom1:my_text_rom
@@ -123,14 +125,22 @@ BEGIN
 		BEGIN
 			IF (clk = '1' AND clk'EVENT) THEN
 				IF (h > 143) AND (h < 784) AND (v > 34) AND (v < 515) THEN
-					r <= douta & douta & douta & douta ;
-					b <= douta & douta & douta & douta ;
-					g <= douta & douta & douta & douta ;
+				    IF (color_delay2 = '0') THEN
+                        r <= douta & douta & douta & douta ;
+                        b <= douta & douta & douta & douta ;
+                        g <= douta & douta & douta & douta ;
+					ELSE
+					    r <= "0000" ;
+                        b <= douta & douta & douta & douta ;
+                        g <= douta & '0' & douta & douta ;
+					END IF ;
 				ELSE
 					r <= "0000" ;
 					g <= "0000" ;
 					b <= "0000" ;
 				END IF ;
+				color_delay1 <= achar(7);
+                color_delay2 <= color_delay1;
 			END IF ;
 	END PROCESS ;
 END mine ;

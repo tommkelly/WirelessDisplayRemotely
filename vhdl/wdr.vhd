@@ -85,15 +85,15 @@ BEGIN
 		IF (clk = '1' AND clk'EVENT) THEN
 			IF (data_ready = '1') THEN
 				addr_counter <= addr_counter + 1;
+				IF (addr_counter >= 3840) THEN
+                    addr_counter <= "000000000000";
+                    scrolling <= '1';
+                END IF;
 				IF (scrolling = '1' AND addr_counter(6 DOWNTO 0) = "0000000") THEN
 				    offset <= offset + 128;
 				    IF (offset >= 3840) THEN
 				        offset <= "000000000000";
 				    END IF;
-				END IF;
-				IF (addr_counter >= 3840) THEN
-					addr_counter <= "000000000000";
-					scrolling <= '1';
 				END IF;
 			END IF;
 			IF (reset = '1') THEN

@@ -49,6 +49,8 @@ ARCHITECTURE structural OF wdr IS
 	SIGNAL wea : STD_LOGIC_VECTOR(0 DOWNTO 0);
 	
 	SIGNAL addr_counter : STD_LOGIC_VECTOR(11 DOWNTO 0) := "000000000000";
+	SIGNAL nxt_addr_counter : STD_LOGIC_VECTOR(11 DOWNTO 0) := "000000000000";
+
 	SIGNAL scrolling : STD_LOGIC := '0';
 	SIGNAL offset : STD_LOGIC_VECTOR(11 DOWNTO 0) := "000000000000";
 BEGIN
@@ -80,21 +82,32 @@ BEGIN
 		vs => vs
 	);
 	
+	nxt_addr_counter <= addr_counter + 1;
+	
 	counter: PROCESS(clk)
 	BEGIN
 		IF (clk = '1' AND clk'EVENT) THEN
 			IF (data_ready = '1') THEN
-				addr_counter <= addr_counter + 1;
-				IF (addr_counter >= 3840) THEN
-                    addr_counter <= "000000000000";
-                    scrolling <= '1';
-                END IF;
-				IF (scrolling = '1' AND addr_counter(6 DOWNTO 0) = "0000000") THEN
-				    offset <= offset + 128;
-				    IF (offset >= 3840) THEN
+				IF (addr_counter = 3839) THEN
+				
+                addr_counter <= "000000000000";
+                scrolling <= '1';
+					 
+				    IF (offset = 3712) THEN
 				        offset <= "000000000000";
+					 ELSE
+						  offset <= offset + 128;
 				    END IF;
-				END IF;
+				ELSE
+					 addr_counter <= addr_counter + 1;
+					 IF (scrolling = '1' AND nxt_addr_counter(6 DOWNTO 0) = "0000000") THEN
+						IF (offset = 3712) THEN
+				        offset <= "000000000000";
+						ELSE
+						  offset <= offset + 128;
+						END IF;
+					 END IF;
+            END IF;
 			END IF;
 			IF (reset = '1') THEN
 				addr_counter <= "000000000000";

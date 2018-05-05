@@ -10,6 +10,7 @@ PORT (clk	: IN STD_LOGIC ;
 	dina	: IN STD_LOGIC_VECTOR(7 DOWNTO 0) ;
 	ena		: IN STD_LOGIC ;
 	wea		: IN STD_LOGIC_VECTOR(0 DOWNTO 0) ;
+	invert	: IN STD_LOGIC;
 	r		: OUT STD_LOGIC_VECTOR(3 DOWNTO 0) ;
 	g		: OUT STD_LOGIC_VECTOR(3 DOWNTO 0) ;
 	b		: OUT STD_LOGIC_VECTOR(3 DOWNTO 0) ;
@@ -126,18 +127,18 @@ BEGIN
 			IF (clk = '1' AND clk'EVENT) THEN
 				IF (h > 143) AND (h < 784) AND (v > 34) AND (v < 515) THEN
 				    IF (color_delay2 = '0') THEN
-                        r <= douta & douta & douta & douta ;
-                        b <= douta & douta & douta & douta ;
-                        g <= douta & douta & douta & douta ;
+                        r <= (douta XOR invert) & (douta XOR invert) & (douta XOR invert) & (douta XOR invert) ;
+                        b <= (douta XOR invert) & (douta XOR invert) & (douta XOR invert) & (douta XOR invert) ;
+                        g <= (douta XOR invert) & (douta XOR invert) & (douta XOR invert) & (douta XOR invert) ;
 					ELSE
-					    r <= "0000" ;
-                        b <= douta & douta & douta & douta ;
-                        g <= douta & '0' & douta & douta ;
+					    r <= ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) ;
+                        b <= (douta XOR invert) & (douta XOR invert) & (douta XOR invert) & (douta XOR invert) ;
+                        g <= (douta XOR invert) & ('0' XOR invert) & (douta XOR invert) & (douta XOR invert) ;
 					END IF ;
 				ELSE
-					r <= "0000" ;
-					g <= "0000" ;
-					b <= "0000" ;
+					r <= ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) ; ;
+					g <= ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) ; ;
+					b <= ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) & ('0' XOR invert) ; ;
 				END IF ;
 				color_delay1 <= achar(7);
                 color_delay2 <= color_delay1;

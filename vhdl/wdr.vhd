@@ -36,6 +36,7 @@ ARCHITECTURE structural OF wdr IS
 			dina	: IN STD_LOGIC_VECTOR(7 DOWNTO 0) ;
 			ena	: IN STD_LOGIC ;
 			wea	: IN STD_LOGIC_VECTOR(0 DOWNTO 0) ;
+			invert	: IN STD_LOGIC ;
 			r		: OUT STD_LOGIC_VECTOR(3 DOWNTO 0) ;
 			g		: OUT STD_LOGIC_VECTOR(3 DOWNTO 0) ;
 			b		: OUT STD_LOGIC_VECTOR(3 DOWNTO 0) ;
@@ -47,12 +48,14 @@ ARCHITECTURE structural OF wdr IS
 	SIGNAL data_ready : STD_LOGIC;
 	SIGNAL reset : STD_LOGIC;
 	SIGNAL wea : STD_LOGIC_VECTOR(0 DOWNTO 0);
+	SIGNAL invert : STD_LOGIC := '0';
 	
 	SIGNAL addr_counter : STD_LOGIC_VECTOR(11 DOWNTO 0) := "000000000000";
-	SIGNAL nxt_addr_counter : STD_LOGIC_VECTOR(11 DOWNTO 0) := "000000000000";
-
+	SIGNAL addr_counter_next : STD_LOGIC_VECTOR(11 DOWNTO 0);
 	SIGNAL scrolling : STD_LOGIC := '0';
+	SIGNAL scrolling_next : STD_LOGIC := '0';
 	SIGNAL offset : STD_LOGIC_VECTOR(11 DOWNTO 0) := "000000000000";
+	SIGNAL offset_next : STD_LOGIC_VECTOR(11 DOWNTO 0);
 BEGIN
 	uartBlock: uart
 	GENERIC MAP(CLKS_PER_TICK => 217)
@@ -82,32 +85,17 @@ BEGIN
 		vs => vs
 	);
 	
-	nxt_addr_counter <= addr_counter + 1;
-	
 	counter: PROCESS(clk)
 	BEGIN
 		IF (clk = '1' AND clk'EVENT) THEN
 			IF (data_ready = '1') THEN
-				IF (addr_counter = 3839) THEN
-				
-                addr_counter <= "000000000000";
-                scrolling <= '1';
-					 
-				    IF (offset = 3712) THEN
-				        offset <= "000000000000";
-					 ELSE
-						  offset <= offset + 128;
-				    END IF;
-				ELSE
-					 addr_counter <= addr_counter + 1;
-					 IF (scrolling = '1' AND nxt_addr_counter(6 DOWNTO 0) = "0000000") THEN
-						IF (offset = 3712) THEN
-				        offset <= "000000000000";
-						ELSE
-						  offset <= offset + 128;
-						END IF;
-					 END IF;
-            END IF;
+				IF (data = "10000000") THEN
+					invert = NOT invert;
+				END ELSE
+					addr_counter = addr_counter_next;
+					scrolling = scrolling_next;
+					offset = offset_next;
+				END IF ;
 			END IF;
 			IF (reset = '1') THEN
 				addr_counter <= "000000000000";
@@ -115,6 +103,35 @@ BEGIN
 				scrolling <= '0';
 			END IF;
 		END IF;
+	END PROCESS;
+	
+	nextSignals: PROCESS(scrolling, addr_counter, offset, data)
+	BEGIN
+		
+		IF (data = "00000000") THEN
+			reset <= '1';
+		END ELSE
+			reset <= '0';
+		END
+		
+		IF (addr_counter = 3839) THEN
+			addr_counter_next <= "000000000000";
+			scrolling_next <= '1';
+		END ELSE
+			addr_counter_next <= addr_counter + 1;
+			scrolling_next <= scrolling;
+		END IF;
+		
+		IF (scrolling_next = '1' AND addr_counter_next(6 DOWNTO 0) = "0000000") THEN
+			IF (offset = 3712) THEN
+				offset_next = "000000000000";
+			END ELSE
+				offset_next = offset + 128;
+			END IF;
+		END ELSE
+			offset_next = offset;
+		END IF;
+		
 	END PROCESS;
 	
 	reset <= '1' WHEN data = "00000000" ELSE '0';

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	var socket=io('/board');
+	var socket=io();
 	socket.on('message', function(message){
 		$('#display').text(message);
 	});

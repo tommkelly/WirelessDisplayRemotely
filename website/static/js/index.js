@@ -6,4 +6,7 @@ $(document).ready(function() {
 	$('#send').click(function(){
 		socket.emit('message', $('#message').val());
 	});
+	$('#reset').click(function(){
+		socket.emit('reset', '');
+	});
 });
